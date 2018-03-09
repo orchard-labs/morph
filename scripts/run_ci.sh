@@ -20,7 +20,7 @@ fi
 
 if [ -d ${HOME}/artifacts ]; then
     cp -r target/test2junit/html ${HOME}/artifacts
-    cp -r target/default/doc ${HOME}/codox
+    cp -r target/doc ${HOME}/codox
 fi
 
 exit $TEST_EXIT_CODE
