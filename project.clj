@@ -1,4 +1,4 @@
-(defproject ca.orchard-labs/morph "0.1.0-SNAPSHOT"
+(defproject ca.orchard-labs/morph "1.0.0-SNAPSHOT"
   :description "A small collection of useful transformations"
   :url "http://github.com/orchard-labs/morph"
   :license {:name "Eclipse Public License"
