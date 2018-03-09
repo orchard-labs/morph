@@ -37,4 +37,7 @@
                    :test2junit-output-dir "target/test2junit"
                    :test2junit-run-ant    true
 
-                   :jvm-opts ["-XX:-OmitStackTraceInFastThrow"]}})
+                   :jvm-opts ["-XX:-OmitStackTraceInFastThrow"]}}
+
+  :repositories [["snapshots" {:username "j0ni"
+                               :password :env}]])
