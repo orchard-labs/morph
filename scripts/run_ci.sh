@@ -23,4 +23,7 @@ if [ -d /artifacts ]; then
     cp -r target/default/doc /codox
 fi
 
+# Remove root-owned artifacts
+lein clean
+
 exit $TEST_EXIT_CODE
