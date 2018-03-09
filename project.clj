@@ -42,5 +42,6 @@
   :repositories [["snapshots" {:url "https://clojars.org/repo"
                                :username "j0ni"
                                :password :env}]
-                 ["releases" {:creds :gpg}]]
+                 ["releases" {:url "https://clojars.org/repo"
+                              :creds :gpg}]]
   :deploy-repositories [["releases" :clojars]])
