@@ -39,5 +39,6 @@
 
                    :jvm-opts ["-XX:-OmitStackTraceInFastThrow"]}}
 
-  :repositories [["snapshots" {:username "j0ni"
+  :repositories [["snapshots" {:url "https://clojars.org/repo"
+                               :username "j0ni"
                                :password :env}]])
