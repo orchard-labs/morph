@@ -78,5 +78,5 @@ jobs:
           name: Deploy master to clojars
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              lein deploy clojars
+              lein deploy snapshots
             fi
