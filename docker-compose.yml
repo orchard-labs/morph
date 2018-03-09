@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    image: orchard-labs/morph
+    command: ash -c "lein run"
+    environment:
+      KINESIS_ENDPOINT: "http://kinesis:4567"
+      DYNAMO_URL:       "http://dyn:7777"
+    volumes:
+      - .:/app
+    depends_on:
+      - dyn
+      - kinesis
+
+  dyn:
+    image: quantisan/dynalite
+    command: --port 7777 --createTableMs 0 --deleteTableMs 0
+    ports:
+      - 7777:7777
+
+  kinesis:
+    image: vsouza/kinesis-local:latest
+    command: --port 4567 --createStreamMs 0
+    ports:
+      - 4567:4567

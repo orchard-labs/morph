@@ -1,0 +1,82 @@
+version: 2
+
+jobs:
+  build:
+    machine: true
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          key: v1-morph-{{ checksum "dev-requirements.txt" }}
+
+      - run:
+          name: Install Docker Compose
+          command: |
+            set -ex
+            if [ ! -d "/home/circleci/miniconda3" ]; then
+                curl -s -o /tmp/miniconda.sh \
+                  https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+                /bin/bash /tmp/miniconda.sh -b
+            fi
+            if [ ! -d "/home/circleci/miniconda3/envs/morph" ]; then
+                /home/circleci/miniconda3/bin/conda create --name morph python=3.6 -y
+            fi
+            source ~/miniconda3/bin/activate morph
+            pip install --upgrade -r dev-requirements.txt
+
+      - run:
+          name: Install ant
+          command: |
+            if [ ! -d "${HOME}/ant" ]
+            then
+                curl -o ${HOME}/ant.tar.bz2 http://mirror.csclub.uwaterloo.ca/apache//ant/binaries/apache-ant-1.10.2-bin.tar.bz2
+                tar jxf ${HOME}/ant.tar.bz2 -C ${HOME}
+                mv ${HOME}/apache-ant-1.10.2 ${HOME}/ant
+            fi
+
+      - save_cache:
+          key: v1-morph-{{ checksum "dev-requirements.txt" }}
+          paths:
+            - ~/miniconda3
+            - ~/ant
+
+      - run:
+          name: Build docker container and pull dependencies
+          command: |
+            source ~/miniconda3/bin/activate morph
+            docker-compose build
+            docker-compose pull --ignore-pull-failures
+
+      - run:
+          name: Run tests
+          command: |
+            source ~/miniconda3/bin/activate morph
+            mkdir -p ~/test_output
+            mkdir -p ~/artifacts
+            mkdir -p ~/codox
+            # timing, sigh
+            docker-compose up -d dyn kinesis
+            sleep 10
+            docker-compose run \
+              --volume="${HOME}/test_output:/test_output" \
+              --volume="${HOME}/artifacts:/artifacts" \
+              --volume="${HOME}/codox:/codox" \
+              --volume="${HOME}/ant:/ant" \
+              app sh -c scripts/run_ci.sh
+
+      - store_test_results:
+          path: ~/test_output
+
+      - store_artifacts:
+          path: ~/artifacts
+
+      - store_artifacts:
+          path: ~/codox
+
+      - deploy:
+          name: Deploy master to clojars
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              lein deploy clojars
+            fi
