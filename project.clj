@@ -16,16 +16,14 @@
            :capture-output? true
            :report          eftest.report.progress/report}
 
-  :profiles {:dev {:source-paths   ["src" "dev/src"]
+  :profiles {:dev {:source-paths   ["src"]
                    :test-paths     ["test"]
-                   :resource-paths ["resources" "dev/resources"]
 
                    :dependencies [[circleci/bond "0.3.1"]
                                   [eftest "0.5.0"]
                                   [org.clojure/test.check "0.10.0-alpha2"]
                                   [com.gfredericks/test.chuck "0.2.8"]
-                                  [viebel/codox-klipse-theme "0.0.5"]
-                                  [environ "1.1.0"]]
+                                  [viebel/codox-klipse-theme "0.0.5"]]
 
                    :plugins [[test2junit "1.3.3"]
                              [lein-eftest "0.5.0"]
@@ -44,4 +42,5 @@
                                :password :env}]
                  ["releases" {:url "https://clojars.org/repo"
                               :creds :gpg}]]
+
   :deploy-repositories [["releases" :clojars]])
