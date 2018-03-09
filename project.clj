@@ -41,4 +41,5 @@
 
   :repositories [["snapshots" {:url "https://clojars.org/repo"
                                :username "j0ni"
-                               :password :env}]])
+                               :password :env}]
+                 ["releases" :clojars]])
