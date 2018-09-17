@@ -4,26 +4,44 @@
             [clj-time.core :as t]))
 
 (deftest keys->kebab-case-test
-  (is (= {:foo-bar 1
-          :foo-bor 2
-          :foo-bur 3}
-         (morph/keys->kebab-case {:fooBar  1
-                                  :foo_bor 2
-                                  :foo-bur 3})))
+  (testing "1-arity"
+    (is (= {:foo-bar 1
+            :foo-bor 2
+            :foo-bur 3}
+           (morph/keys->kebab-case {:fooBar  1
+                                    :foo_bor 2
+                                    :foo-bur 3})))
 
-  (is (= {:foo-bar {:foo-bor 1}}
-         (morph/keys->kebab-case {:foo_bar {:fooBor 1}}))))
+    (is (= {:foo-bar {:foo-bor 1}}
+           (morph/keys->kebab-case {:foo_bar {:fooBor 1}}))))
+
+  (testing "2-arity"
+    (is (not= {:phone-number-e164 "not a thing"}
+              (morph/keys->kebab-case {:phoneNumberE164 "not a thing"})))
+
+    (is (= {:phone-number-e164 "not a thing"}
+           (morph/keys->kebab-case {:phone-number-e-164 :phone-number-e164}
+                                   {:phoneNumberE164 "not a thing"})))))
 
 (deftest keys->camelCase-test
-  (is (= {:fooBar 1
-          :fooBor 2
-          :fooBur 3}
-         (morph/keys->camelCase {:fooBar  1
-                                 :foo_bor 2
-                                 :foo-bur 3})))
+  (testing "1-arity"
+    (is (= {:fooBar 1
+            :fooBor 2
+            :fooBur 3}
+           (morph/keys->camelCase {:fooBar  1
+                                   :foo_bor 2
+                                   :foo-bur 3})))
 
-  (is (= {:fooBar {:fooBor 1}}
-         (morph/keys->camelCase {:foo_bar {:foo-bor 1}}))))
+    (is (= {:fooBar {:fooBor 1}}
+           (morph/keys->camelCase {:foo_bar {:foo-bor 1}}))))
+
+  (testing "2-arity"
+    (is (not= {:x_e10_activationType "not a thing"}
+              (morph/keys->camelCase {:x-e10-activation-type "not a thing"})))
+
+    (is (= {:x_e10_activationType "not a thing"}
+           (morph/keys->camelCase {:xE10ActivationType :x_e10_activationType}
+                                  {:x-e10-activation-type "not a thing"})))))
 
 (deftest recursive-navigators-test
   (let [now      (t/now)

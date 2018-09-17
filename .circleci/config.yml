@@ -16,9 +16,9 @@ jobs:
           command: |
             if [ ! -d "${HOME}/ant" ]
             then
-                curl -o ${HOME}/ant.tar.bz2 http://mirror.csclub.uwaterloo.ca/apache//ant/binaries/apache-ant-1.10.2-bin.tar.bz2
+                curl -o ${HOME}/ant.tar.bz2 http://mirror.csclub.uwaterloo.ca/apache//ant/binaries/apache-ant-1.10.5-bin.tar.bz2
                 tar jxf ${HOME}/ant.tar.bz2 -C ${HOME}
-                mv ${HOME}/apache-ant-1.10.2 ${HOME}/ant
+                mv ${HOME}/apache-ant-1.10.5 ${HOME}/ant
             fi
 
       - save_cache:
