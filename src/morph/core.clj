@@ -39,13 +39,9 @@
                                       non-map-collection
                                       specter/ALL))))
 
-(defn trap-mappings
-  [mappings]
-  #(get mappings % %))
-
 (defn transform-keys
   ([pred f mappings m]
-   (transform-keys pred (comp (trap-mappings mappings) f) m))
+   (transform-keys pred (comp #(mappings % %) f) m))
   ([pred f m]
    (specter/transform [RECURSIVE-MAP-KEYS pred] f (have map? m)))
   ([f m]
