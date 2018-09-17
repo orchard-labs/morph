@@ -41,8 +41,7 @@
 
 (defn trap-mappings
   [mappings]
-  (fn [v]
-    (or (get mappings v) v)))
+  #(get mappings % %))
 
 (defn transform-keys
   ([pred f mappings m]
