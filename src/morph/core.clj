@@ -40,10 +40,29 @@
 
 (defmulti transform-keys
   "Transform keys in all nested structures recursively. The `coll`
-  argument may be a collection or a map."
+  argument may be a collection or a map. Keys are filtered using the
+  `pred` function, which must take a single argument and return
+  truthy. If selected, keys are transformed using the `f` function,
+  which must take a single argument and return the replacement value.
+  A `mappings` map argument may be provided, which will used to rename
+  keys once the `f` transformation is complete.
+
+  Examples:
+
+  user> (morph.core/transform-keys
+          keyword?
+          (comp keyword clojure.string/upper-case name)
+          {:str \"some string\" \"strKey\" 99 :vec [1 1 1 1] :top-level-number 8})
+  {:STR \"some string\", \"strKey\" 99, :VEC [1 1 1 1], :TOP-LEVEL-NUMBER 8}
+  user> (morph.core/transform-keys
+          keyword?
+          (comp keyword clojure.string/upper-case name)
+          {:STR :charArray}
+          {:str \"some string\" \"strKey\" 99 :vec [1 1 1 1] :top-level-number 8})
+  {:charArray \"some string\", \"strKey\" 99, :VEC [1 1 1 1], :TOP-LEVEL-NUMBER 8}
+  user>"
   {:arglists '([pred f mappings coll] [pred f coll] [f coll])}
   (fn [& args] (-> args last type)))
-
 (defmethod transform-keys clojure.lang.IPersistentMap
   ([pred f mappings m]
    (transform-keys pred (comp #(mappings % %) f) m))
@@ -61,10 +80,21 @@
    (transform-keys (constantly true) f coll)))
 
 (defmulti transform-vals
-  "Transform keys in all nested structures recursively. The `coll`
-  argument may be a collection or a map."
+  "Transform values in all nested structures recursively. The `coll`
+  argument may be a collection or a map. Values are filtered using the
+  `pred` function, which must take a single argument and return
+  truthy. If selected, keys are transformed using the `f` function,
+  which must take a single argument and return the replacement value.
+
+  Example:
+
+  user> (->> {:str \"some string\" :vec [1 1 1 1] :top-level-number 8}
+             (morph.core/transform-vals number? inc)
+             (morph.core/transform-vals string? clojure.string/upper-case))
+  {:str \"SOME STRING\", :vec [2 2 2 2], :top-level-number 9}"
   {:arglists '([pred f coll] [f coll])}
   (fn [& args] (-> args last type)))
+
 
 (defmethod transform-vals clojure.lang.IPersistentMap
   ([pred f m]
@@ -81,14 +111,14 @@
 (defn dates->joda
   "Transform all the java.util.Date objects in an arbitrarily nested
   structure into org.joda.time.DateTime objects."
-  [m]
-  (transform-vals (partial instance? Date) coerce/to-date-time m))
+  [coll]
+  (transform-vals (partial instance? Date) coerce/to-date-time coll))
 
 (defn joda->dates
   "Transform all the org.joda.time.DateTime objects in an arbitrarily
   nested structure into java.util.Date objects."
-  [m]
-  (transform-vals (partial instance? DateTime) coerce/to-date m))
+  [coll]
+  (transform-vals (partial instance? DateTime) coerce/to-date coll))
 
 (def keys->kebab-case
   (partial transform-keys
