@@ -1,4 +1,4 @@
-(defproject ca.orchard-labs/morph "1.1.3-SNAPSHOT"
+(defproject ca.orchard-labs/morph "1.2.0"
   :description "A small collection of useful transformations"
   :url "http://github.com/orchard-labs/morph"
   :license {:name "Eclipse Public License"
@@ -6,7 +6,6 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [camel-snake-kebab "0.4.0"]
                  [com.rpl/specter "1.1.0"]
-                 [com.taoensso/truss "1.5.0"]
                  [clj-time "0.14.2"]]
 
   :repl-options {:init-ns user
