@@ -3,6 +3,37 @@
             [morph.core :as morph]
             [clj-time.core :as t]))
 
+(deftest transform-keys-test
+  (testing "simple map"
+    (let [m {:drink 3 :food 12 :dogs [{:name "biff"} {:name "rover"}]}
+          m-prime (morph/transform-keys any? (comp keyword clojure.string/reverse name) m)]
+      (is (= {:knird 3 :doof 12 :sgod [{:eman "biff"} {:eman "rover"}]}
+             m-prime))))
+
+  (testing "map with mappings"
+    (let [m {:drink 3 :food 12 :dogs [{:name "biff"} {:name "rover"}]}
+          m-prime (morph/transform-keys
+                    any? (comp keyword clojure.string/reverse name) {:knird :fnord} m)]
+      (is (= {:fnord 3 :doof 12 :sgod [{:eman "biff"} {:eman "rover"}]}
+             m-prime))))
+
+  (testing "simple collection of maps"
+    (let [coll [{:drink 3 :food 12 :dogs [{:name "biff"} {:name "rover"}]}
+                {:drink 1 :food 4 :dogs [{:name "eric"}]}]
+          coll-prime (morph/transform-keys any? (comp keyword clojure.string/reverse name) coll)]
+      (is (= [{:knird 3 :doof 12 :sgod [{:eman "biff"} {:eman "rover"}]}
+              {:knird 1 :doof 4 :sgod [{:eman "eric"}]}]
+             coll-prime))))
+
+  (testing "simple collection of maps with mappings"
+    (let [coll [{:drink 3 :food 12 :dogs [{:name "biff"} {:name "rover"}]}
+                {:drink 1 :food 4 :dogs [{:name "eric"}]}]
+          coll-prime (morph/transform-keys
+                       any? (comp keyword clojure.string/reverse name) {:knird :fnord} coll)]
+      (is (= [{:fnord 3 :doof 12 :sgod [{:eman "biff"} {:eman "rover"}]}
+              {:fnord 1 :doof 4 :sgod [{:eman "eric"}]}]
+             coll-prime)))))
+
 (deftest keys->kebab-case-test
   (testing "1-arity"
     (is (= {:foo-bar 1

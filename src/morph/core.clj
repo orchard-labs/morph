@@ -39,13 +39,27 @@
                                       non-map-collection
                                       specter/ALL))))
 
-(defn transform-keys
+(defmulti transform-keys
+  "Transform keys in all nested structures recursively. The `coll`
+  argument may be a collection or a map."
+  {:arglists '([pred f mappings coll] [pred f coll] [f coll])}
+  (fn [& args] (-> args last type)))
+
+(defmethod transform-keys clojure.lang.IPersistentMap
   ([pred f mappings m]
    (transform-keys pred (comp #(mappings % %) f) m))
   ([pred f m]
    (specter/transform [RECURSIVE-MAP-KEYS pred] f (have map? m)))
   ([f m]
    (transform-keys (constantly true) f m)))
+
+(defmethod transform-keys clojure.lang.IPersistentCollection
+  ([pred f mappings coll]
+   (transform-keys pred (comp #(mappings % %) f) coll))
+  ([pred f coll]
+   (map #(transform-keys pred f %) coll))
+  ([f coll]
+   (transform-keys (constantly true) f coll)))
 
 (defn transform-vals
   ([pred f m]
