@@ -6,7 +6,6 @@
   :dependencies [[org.clojure/clojure "1.9.0"]
                  [camel-snake-kebab "0.4.0"]
                  [com.rpl/specter "1.1.0"]
-                 [com.taoensso/truss "1.5.0"]
                  [clj-time "0.14.2"]]
 
   :repl-options {:init-ns user
