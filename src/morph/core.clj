@@ -63,7 +63,7 @@
 (defmulti transform-vals
   "Transform keys in all nested structures recursively. The `coll`
   argument may be a collection or a map."
-  {:arglists '([pred f m] [f m])}
+  {:arglists '([pred f coll] [f coll])}
   (fn [& args] (-> args last type)))
 
 (defmethod transform-vals clojure.lang.IPersistentMap
@@ -75,8 +75,8 @@
 (defmethod transform-vals clojure.lang.IPersistentCollection
   ([pred f coll]
    (map #(transform-vals pred f %) coll))
-  ([f m]
-   (transform-vals (constantly true) f m)))
+  ([f coll]
+   (transform-vals (constantly true) f coll)))
 
 (defn dates->joda
   "Transform all the java.util.Date objects in an arbitrarily nested
