@@ -34,6 +34,21 @@
               {:fnord 1 :doof 4 :sgod [{:eman "eric"}]}]
              coll-prime)))))
 
+(deftest transform-vals-test
+  (testing "simple map"
+    (let [m {:drink 3 :food 12 :dogs [{:name "biff"} {:name "rover"}]}
+          m-prime (morph/transform-vals number? inc m)]
+      (is (= {:drink 4 :food 13 :dogs [{:name "biff"} {:name "rover"}]}
+             m-prime))))
+
+  (testing "simple collection of maps"
+    (let [coll [{:drink 3 :food 12 :dogs [{:name "biff"} {:name "rover"}]}
+                {:drink 1 :food 4 :dogs [{:name "eric"}]}]
+          coll-prime (morph/transform-vals number? inc coll)]
+      (is (= [{:drink 4 :food 13 :dogs [{:name "biff"} {:name "rover"}]}
+              {:drink 2 :food 5 :dogs [{:name "eric"}]}]
+             coll-prime)))))
+
 (deftest keys->kebab-case-test
   (testing "1-arity"
     (is (= {:foo-bar 1

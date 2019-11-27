@@ -1,8 +1,7 @@
 (ns morph.core
   (:require [camel-snake-kebab.core :as csk]
             [com.rpl.specter :as specter]
-            [clj-time.coerce :as coerce]
-            [taoensso.truss :refer [have]])
+            [clj-time.coerce :as coerce])
   (:import [org.joda.time DateTime]
            [java.util Date]))
 
@@ -49,7 +48,7 @@
   ([pred f mappings m]
    (transform-keys pred (comp #(mappings % %) f) m))
   ([pred f m]
-   (specter/transform [RECURSIVE-MAP-KEYS pred] f (have map? m)))
+   (specter/transform [RECURSIVE-MAP-KEYS pred] f m))
   ([f m]
    (transform-keys (constantly true) f m)))
 
@@ -61,9 +60,21 @@
   ([f coll]
    (transform-keys (constantly true) f coll)))
 
-(defn transform-vals
+(defmulti transform-vals
+  "Transform keys in all nested structures recursively. The `coll`
+  argument may be a collection or a map."
+  {:arglists '([pred f m] [f m])}
+  (fn [& args] (-> args last type)))
+
+(defmethod transform-vals clojure.lang.IPersistentMap
   ([pred f m]
-   (specter/transform [LEAF-NODES pred] f (have map? m)))
+   (specter/transform [LEAF-NODES pred] f m))
+  ([f m]
+   (transform-vals (constantly true) f m)))
+
+(defmethod transform-vals clojure.lang.IPersistentCollection
+  ([pred f coll]
+   (map #(transform-vals pred f %) coll))
   ([f m]
    (transform-vals (constantly true) f m)))
 
