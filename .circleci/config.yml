@@ -42,10 +42,3 @@ jobs:
 
       - store_artifacts:
           path: ~/codox
-
-      - deploy:
-          name: Deploy master to clojars
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              lein deploy snapshots
-            fi
