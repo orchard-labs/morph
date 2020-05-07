@@ -63,6 +63,7 @@
   user>"
   {:arglists '([pred f mappings coll] [pred f coll] [f coll])}
   (fn [& args] (-> args last type)))
+
 (defmethod transform-keys clojure.lang.IPersistentMap
   ([pred f mappings m]
    (transform-keys pred (comp #(mappings % %) f) m))
@@ -94,7 +95,6 @@
   {:str \"SOME STRING\", :vec [2 2 2 2], :top-level-number 9}"
   {:arglists '([pred f coll] [f coll])}
   (fn [& args] (-> args last type)))
-
 
 (defmethod transform-vals clojure.lang.IPersistentMap
   ([pred f m]
